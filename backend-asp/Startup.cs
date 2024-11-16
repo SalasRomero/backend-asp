@@ -36,13 +36,13 @@ namespace backend_asp
             //Vamos a configurar el sistema de autorización
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
-            services.AddResponseCaching(); //Agregamso la configuracion del caching
+            //services.AddResponseCaching(); //Agregamso la configuracion del caching
 
             //Aqui vamos a agregar la configuración de la inyección de dependencias
             //services.AddTransient<RepositorioEnMemoria>();
-            services.AddScoped<IRepositorio,RepositorioEnMemoria>();
+            //services.AddScoped<IRepositorio,RepositorioEnMemoria>();
             //services.AddScoped<WeatherForecastController>();
-            services.AddTransient<MiFiltroDeAccion>();
+            //services.AddTransient<MiFiltroDeAccion>();
 
             services.AddControllers(options=> {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
@@ -55,45 +55,45 @@ namespace backend_asp
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         //Este método es nuestra tuberia de procesos
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
             //vamos a crear nuestro middleware
 
 
-            app.Use(async (context,next)=> {
-                //Se usa el memorystring porque el cuerpo de la peticion es un string 
-                using (var swapStream = new MemoryStream()) {
+            //app.Use(async (context,next)=> {
+            //    //Se usa el memorystring porque el cuerpo de la peticion es un string 
+            //    using (var swapStream = new MemoryStream()) {
                     
-                    var respuestaOriginal = context.Response.Body;
-                    context.Response.Body = swapStream;
+            //        var respuestaOriginal = context.Response.Body;
+            //        context.Response.Body = swapStream;
 
-                    await next.Invoke();
+            //        await next.Invoke();
 
-                    swapStream.Seek(0,SeekOrigin.Begin);
-                    string respuesta = new StreamReader(swapStream).ReadToEnd();
-                    swapStream.Seek(0,SeekOrigin.Begin);
+            //        swapStream.Seek(0,SeekOrigin.Begin);
+            //        string respuesta = new StreamReader(swapStream).ReadToEnd();
+            //        swapStream.Seek(0,SeekOrigin.Begin);
 
-                    await swapStream.CopyToAsync(respuestaOriginal);
-                    context.Response.Body = respuestaOriginal;
+            //        await swapStream.CopyToAsync(respuestaOriginal);
+            //        context.Response.Body = respuestaOriginal;
 
-                    logger.LogInformation(respuesta);
+            //        logger.LogInformation(respuesta);
 
-                }
+            //    }
             
-            });
+            //});
 
             
             //solo se ejecuta si entra en esta ruta
             //Si no entra a esta ruta va ha seguri con el proceso siguiente
-            app.Map("/mapa1",(app)=> {
-                //Vamos a crear una subtuberia
-                app.Run(async (context) =>
-                {
-                    await context.Response.WriteAsync("Estoy interceptando la respuesta con un pipeline.");
+            //app.Map("/mapa1",(app)=> {
+            //    //Vamos a crear una subtuberia
+            //    app.Run(async (context) =>
+            //    {
+            //        await context.Response.WriteAsync("Estoy interceptando la respuesta con un pipeline.");
 
-                });
-            });
+            //    });
+            //});
 
             //app.Run(async context =>
             //{
@@ -113,7 +113,7 @@ namespace backend_asp
 
             app.UseRouting();
 
-            app.UseResponseCaching();//Middleware que activa el response caching
+            //app.UseResponseCaching();//Middleware que activa el response caching
 
             app.UseAuthentication();
 

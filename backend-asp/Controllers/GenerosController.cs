@@ -18,56 +18,59 @@ namespace backend_asp.Controllers
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GenerosController : ControllerBase
     {
-        private readonly IRepositorio _repositorio;
+        //private readonly IRepositorio _repositorio;
         private readonly ILogger _logger;
-        public GenerosController(IRepositorio repositorio, ILogger<GenerosController> logger) {
-            this._repositorio = repositorio;
+        public GenerosController(ILogger<GenerosController> logger) {
+            //this._repositorio = repositorio;
             this._logger = logger;
         }
 
         [HttpGet] // api/generos //Definimos el metodo que se usa
-        [HttpGet("listado")] // api/generos/listado
-        [HttpGet("/listadogeneros")] // /listadogeneros
+        //[HttpGet("listado")] // api/generos/listado
+        //[HttpGet("/listadogeneros")] // /listadogeneros
         //Este filtro no funciona cuando se usa la cabecera autorization
-        [ResponseCache(Duration=60)] // se agrega el filtro
+        //[ResponseCache(Duration=60)] // se agrega el filtro
         // [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // con esto decimos que nos deben de pasar un token para entrar
-        [ServiceFilter(typeof(MiFiltroDeAccion))] //Permite inicializar el filtro
+        //[ServiceFilter(typeof(MiFiltroDeAccion))] //Permite inicializar el filtro
         public ActionResult<List<Genero>> Get() 
         {
 
-            _logger.LogInformation("Vamos a mostrar los generos");
-            return this._repositorio.ObtenerTodosLosGeneros();
+            //_logger.LogInformation("Vamos a mostrar los generos");
+            //return this._repositorio.ObtenerTodosLosGeneros();
+            return new List<Genero> { new Genero { Id=1,Nombre="Comedia"} };
         }
 
-        [HttpGet("guid")]
-        public ActionResult<Guid> GetGui()
-        {
-            return this._repositorio.ObtenerGuid();
-        }
+        //[HttpGet("guid")]
+        //public ActionResult<Guid> GetGui()
+        //{
+        //    return this._repositorio.ObtenerGuid();
+        //}
 
 
 
         //[HttpGet("ejemplo")]
         //[HttpGet("{Id:int}/{nombre=David}")] // /api/generos/1/David
         [HttpGet("{Id:int}")]
-        public async Task<ActionResult<Genero>> Get(int Id,[FromHeader]string nombre)
+        public async Task<ActionResult<Genero>> Get(int Id)
         {
 
-            _logger.LogDebug($"Obteniendo un género por el id {Id}");
+            //_logger.LogDebug($"Obteniendo un género por el id {Id}");
 
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
-            
-            var genero = await this._repositorio.ObtenerPorId(Id);
+            //if (!ModelState.IsValid) {
+            //    return BadRequest(ModelState);
+            //}
 
-            if (genero == null) {
-                throw new ApplicationException($"El género de ID {Id} no fue encontrado");
-                _logger.LogWarning($"No pudimos encontrar el género del id {Id}");
-                return NotFound();
-            }
+            //var genero = await this._repositorio.ObtenerPorId(Id);
 
-            return genero;
+            //if (genero == null) {
+            //    //throw new ApplicationException($"El género de ID {Id} no fue encontrado");
+            //    _logger.LogWarning($"No pudimos encontrar el género del id {Id}");
+            //    return NotFound();
+            //}
+
+            //return genero;
+
+            throw new NotImplementedException();
 
         }
 
@@ -75,20 +78,22 @@ namespace backend_asp.Controllers
         public ActionResult Post([FromBody] Genero genero)
         {
 
-            this._repositorio.CrearGenero(genero);
-            return NoContent();
+            throw new NotImplementedException();
+
         }
 
         [HttpPut]
         public ActionResult Put([FromBody] Genero genero)
-        { 
+        {
 
-            return NoContent();
+            throw new NotImplementedException();
+
         }
 
         [HttpDelete]
-        public ActionResult Delete() { 
-            return NoContent();
+        public ActionResult Delete() {
+            throw new NotImplementedException();
+
         }
     }
 }
