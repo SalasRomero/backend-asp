@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,12 @@ namespace backend_asp.Controllers
     {
         //private readonly IRepositorio _repositorio;
         private readonly ILogger _logger;
-        public GenerosController(ILogger<GenerosController> logger) {
+        private readonly ApplicationDbContext _context;
+        public GenerosController(ILogger<GenerosController> logger,
+            ApplicationDbContext context) {
             //this._repositorio = repositorio;
             this._logger = logger;
+            this._context = context;
         }
 
         [HttpGet] // api/generos //Definimos el metodo que se usa
@@ -32,12 +36,13 @@ namespace backend_asp.Controllers
         //[ResponseCache(Duration=60)] // se agrega el filtro
         // [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // con esto decimos que nos deben de pasar un token para entrar
         //[ServiceFilter(typeof(MiFiltroDeAccion))] //Permite inicializar el filtro
-        public ActionResult<List<Genero>> Get() 
+        public async Task<ActionResult<List<Genero>>> Get() 
         {
 
             //_logger.LogInformation("Vamos a mostrar los generos");
             //return this._repositorio.ObtenerTodosLosGeneros();
-            return new List<Genero> { new Genero { Id=1,Nombre="Comedia"} };
+            //return new List<Genero> { new Genero { Id=1,Nombre="Comedia"} };
+            return await this._context.Generos.ToListAsync();
         }
 
         //[HttpGet("guid")]
@@ -75,10 +80,14 @@ namespace backend_asp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] Genero genero)
+        public async Task<ActionResult> Post([FromBody] Genero genero)
         {
 
-            throw new NotImplementedException();
+            await this._context.Generos.AddAsync(genero);
+            await this._context.SaveChangesAsync();
+
+            return NoContent();
+
 
         }
 

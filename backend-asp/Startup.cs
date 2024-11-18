@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +34,10 @@ namespace backend_asp
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddDbContext<ApplicationDbContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("defaultConnection"));
+            });
+
             //Vamos a configurar el sistema de autorización
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
@@ -43,6 +48,16 @@ namespace backend_asp
             //services.AddScoped<IRepositorio,RepositorioEnMemoria>();
             //services.AddScoped<WeatherForecastController>();
             //services.AddTransient<MiFiltroDeAccion>();
+
+            services.AddCors((options)=> {
+
+                var frontend_url = Configuration.GetValue<string>("frontend_url");
+                options.AddDefaultPolicy((builder)=> {
+                    //No hay que colocar el / al  final 
+                    builder.WithOrigins(frontend_url).AllowAnyMethod().AllowAnyHeader();
+                });
+            
+            });
 
             services.AddControllers(options=> {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
@@ -112,6 +127,8 @@ namespace backend_asp
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             //app.UseResponseCaching();//Middleware que activa el response caching
 
